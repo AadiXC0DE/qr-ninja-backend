@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"qrninja/config"
 	"qrninja/routers"
 
