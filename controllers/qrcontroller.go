@@ -14,19 +14,26 @@ func StoreQRCode(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	uuid := c.Param("userId")
+	qr.UserId = uuid
+
 	config.DB.Create(&qr)
 	c.JSON(http.StatusOK, qr)
 }
 
 func FetchQRCodes(c *gin.Context) {
+	userId := c.Param("userId")
 	var qrs []models.QRCode
-	config.DB.Find(&qrs)
+	config.DB.Where("user_id = ?", userId).Find(&qrs)
 	c.JSON(http.StatusOK, qrs)
 }
 
 func DeleteQRCode(c *gin.Context) {
+	userId := c.Param("userId")
+	id := c.Param("id")
 	var qr models.QRCode
-	if err := config.DB.Where("id = ?", c.Param("id")).First(&qr).Error; err != nil {
+	if err := config.DB.Where("user_id = ? AND id = ?", userId, id).First(&qr).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Record not found!"})
 		return
 	}
